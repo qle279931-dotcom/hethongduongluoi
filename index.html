@@ -1,0 +1,48 @@
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+<script>
+  const khung = document.getElementById('khung');
+  const scene = new THREE.Scene();
+
+  const camera = new THREE.PerspectiveCamera(
+    45, khung.clientWidth / khung.clientHeight, 1, 2000);
+  camera.position.set(0, 150, 250);
+  camera.lookAt(0, 0, 0);
+
+  const renderer = new THREE.WebGLRenderer({ antialias: true });
+  renderer.setSize(khung.clientWidth, khung.clientHeight);
+  renderer.setClearColor(0x05070d);
+  khung.appendChild(renderer.domElement);
+
+  // Độ cao của lưới (lúc này lưới phẳng)
+  function doCao(r) { return 0; }
+
+  const matLuoi = new THREE.LineBasicMaterial({ color: 0x6fa8c7 });
+  const BAN_KINH = 100;
+
+  // Các vòng tròn đồng tâm
+  for (let r = 20; r <= BAN_KINH; r += 20) {
+    const diem = [];
+    for (let i = 0; i <= 100; i++) {
+      const goc = (i / 100) * Math.PI * 2;
+      diem.push(new THREE.Vector3(
+        r * Math.cos(goc), doCao(r), r * Math.sin(goc)));
+    }
+    const hinh = new THREE.BufferGeometry().setFromPoints(diem);
+    scene.add(new THREE.Line(hinh, matLuoi));
+  }
+
+  // Các đường tỏa ra từ tâm
+  for (let k = 0; k < 24; k++) {
+    const goc = (k / 24) * Math.PI * 2;
+    const diem = [];
+    for (let r = 0; r <= BAN_KINH; r += 5) {
+      diem.push(new THREE.Vector3(
+        r * Math.cos(goc), doCao(r), r * Math.sin(goc)));
+    }
+    const hinh = new THREE.BufferGeometry().setFromPoints(diem);
+    scene.add(new THREE.Line(hinh, matLuoi));
+  }
+
+  // --- 4. Vẽ lên màn hình ---
+  renderer.render(scene, camera);
+</script>
